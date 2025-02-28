@@ -107,27 +107,6 @@
     .wrapper {
       display: flex;
     }
-
-    @media (max-width: 768px) {
-      .container {
-        width: 95%;
-      }
-
-      .plant {
-        width: 60px;
-        height: 60px;
-      }
-
-      .lineBlock {
-        gap: 0;
-      }
-
-      .button {
-        font-size: 14px;
-        width: 20px;
-        height: 20px;
-      }
-    }
   </style>
 </head>
 
@@ -185,30 +164,37 @@
       rowButtons.appendChild(removeItemBtn);
 
       for (let i = 0; i < MAX_ITEMS_PER_ROW; i++) {
-        row.appendChild(createPlant(i === 0)); // Apenas o primeiro item da linha começa colorido
+        row.appendChild(createPlant(i === Math.floor(MAX_ITEMS_PER_ROW / 2)));
       }
 
       wrapper.appendChild(row);
       wrapper.appendChild(rowButtons);
-      // row.appendChild(rowButtons);
       container.appendChild(wrapper);
       rows.push(wrapper);
     }
 
-    function removeRow() {
-      if (rows.length > 1) {
-        const lastRow = rows.pop();
-        container.removeChild(lastRow);
-      }
-    }
-
     function addItem(row) {
       const items = row.querySelectorAll('.plant');
-      for (let item of items) {
-        if (!item.classList.contains('active')) {
-          item.classList.add('active');
-          break;
+      let middleIndex = Math.floor(items.length / 2);
+      let left = middleIndex - 1;
+      let right = middleIndex + 1;
+
+      if (!items[middleIndex].classList.contains('active')) {
+        items[middleIndex].classList.add('active');
+        return;
+      }
+
+      while (left >= 0 || right < items.length) {
+        if (left >= 0 && !items[left].classList.contains('active')) {
+          items[left].classList.add('active');
+          return;
         }
+        if (right < items.length && !items[right].classList.contains('active')) {
+          items[right].classList.add('active');
+          return;
+        }
+        left--;
+        right++;
       }
     }
 
@@ -222,22 +208,17 @@
       }
     }
 
-    function addColumn() {
-      if (rows.length < MAX_ROWS) {
-        createRow();
-      }
-    }
-
-    function removeColumn() {
-      removeRow();
-    }
-
     window.onload = () => {
       createRow();
     };
 
-    addColumnBtn.addEventListener('click', addColumn);
-    removeColumnBtn.addEventListener('click', removeColumn);
+    addColumnBtn.addEventListener('click', createRow);
+    removeColumnBtn.addEventListener('click', () => {
+      if (rows.length > 1) {
+        const lastRow = rows.pop();
+        container.removeChild(lastRow);
+      }
+    });
   </script>
 
 </body>
