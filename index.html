@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Linhas e Colunas Dinâmicas</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html,
+    body {
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #222;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 80%;
+      height: 80%;
+      background-color: white;
+      border-radius: 10px;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+
+    .button {
+      background-color: blue;
+      border-radius: 5px;
+      padding: 10px;
+      color: white;
+      font-size: 30px;
+      border: none;
+      cursor: pointer;
+      transition: 0.3s;
+      margin-bottom: 20px;
+    }
+
+    .button:hover {
+      background-color: darkblue;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <a class="link button" href="/index1.html">Exemplo 1</a>
+    <a class="link button" href="/index2.html">Exemplo 2</a>
+    <a class="link button" href="/index3.html">Exemplo 3</a>
+  </div>
+
+  <script>
+    const container = document.querySelector('#main-container');
+    const addColumnBtn = document.querySelector('#addColumn');
+    const removeColumnBtn = document.querySelector('#removeColumn');
+
+    let rows = [];
+    const MAX_ITEMS_PER_ROW = 5;
+    const MAX_ROWS = 5;
+
+    function createPlant() {
+      const img = document.createElement('img');
+      img.src = './plant.png';
+      img.classList.add('plant');
+
+      setTimeout(() => img.classList.add('show'), 10);
+      return img;
+    }
+
+    function createRow() {
+      if (rows.length >= MAX_ROWS) return;
+
+      const row = document.createElement('div');
+      row.classList.add('lineBlock');
+
+      const rowButtons = document.createElement('div');
+      rowButtons.classList.add('row-buttons');
+
+      const addItemBtn = document.createElement('button');
+      addItemBtn.classList.add('button');
+      addItemBtn.textContent = '+ Item';
+      addItemBtn.onclick = () => addItem(row);
+
+      const removeItemBtn = document.createElement('button');
+      removeItemBtn.classList.add('button');
+      removeItemBtn.textContent = '- Item';
+      removeItemBtn.onclick = () => removeItem(row);
+
+      rowButtons.appendChild(addItemBtn);
+      rowButtons.appendChild(removeItemBtn);
+
+      row.appendChild(createPlant());
+      row.appendChild(rowButtons);
+
+      container.appendChild(row);
+      rows.push(row);
+    }
+
+    function removeRow() {
+      if (rows.length > 1) {
+        const lastRow = rows.pop();
+        container.removeChild(lastRow);
+      }
+    }
+
+    function addItem(row) {
+      if (row.children.length - 1 < MAX_ITEMS_PER_ROW) {
+        row.insertBefore(createPlant(), row.lastChild);
+      }
+    }
+
+    function removeItem(row) {
+      if (row.children.length > 2) {
+        row.removeChild(row.children[row.children.length - 2]);
+      } else if (rows.length > 1) {
+        removeRow();
+      }
+    }
+
+    function addColumn() {
+      if (rows.length < MAX_ROWS) {
+        createRow();
+      }
+    }
+
+    function removeColumn() {
+      removeRow();
+    }
+
+    window.onload = () => {
+      createRow();
+    };
+
+    addColumnBtn.addEventListener('click', addColumn);
+    removeColumnBtn.addEventListener('click', removeColumn);
+  </script>
+
+</body>
+
+</html>
